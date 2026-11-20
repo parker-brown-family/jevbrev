@@ -57,6 +57,14 @@ impl Brev {
         crate::import::import_openapi(json, source).map_err(|e| JsError::new(&e))
     }
 
+    /// Re-import OpenAPI into an existing `.brev`, keeping its words: `{ text, report }`.
+    #[wasm_bindgen(js_name = mergeOpenapi)]
+    pub fn merge_openapi(json: &str, source: &str, existing: &str) -> Result<JsValue, JsError> {
+        let (text, report) = crate::merge::import_into(json, source, existing, "existing")
+            .map_err(|e| JsError::new(&e))?;
+        to_js(&serde_json::json!({ "text": text, "report": report }))
+    }
+
     /// Call 1: the action menu. `context` fields go into `state` beside `request`.
     pub fn menu(&self, request: &str, context: JsValue) -> Result<JsValue, JsError> {
         let ctx = object(context, "context")?;

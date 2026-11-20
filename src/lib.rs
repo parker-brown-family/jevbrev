@@ -15,8 +15,10 @@
 //! The format and every step are specified in `docs/using-brev.md`.
 #![forbid(unsafe_code)]
 
+pub mod fmt;
 pub mod frames;
 pub mod import;
+pub mod merge;
 pub mod model;
 pub mod out;
 pub mod parse;
@@ -26,8 +28,10 @@ pub mod spot;
 #[cfg(feature = "wasm")]
 mod wasm;
 
+pub use fmt::to_text;
 pub use frames::{FrameError, Known, MODEL, NONE, frames, menu};
 pub use import::import_openapi;
+pub use merge::{MergeReport, import_into};
 pub use model::{Action, Api, Brev, Diag, Input, Kind, Role, RoleGroup, Type};
 pub use out::{http_call, llm, openapi, tools};
 pub use parse::{check, load, parse};

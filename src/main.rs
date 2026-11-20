@@ -9,7 +9,9 @@ jevbrev: short API definitions that code turns into Jev questions and HTTP calls
 
 USAGE
   jevbrev check FILE                                   every problem, with its line; exit 1 if any
-  jevbrev import OPENAPI.json                          a draft .brev on stdout
+  jevbrev import OPENAPI.json [--into FILE]            a draft .brev on stdout; with --into, merged into
+                                                       FILE keeping its words, and a report on stderr
+  jevbrev fmt FILE                                     FILE in the standard layout, on stdout
   jevbrev menu FILE REQUEST [--context JSON]           call 1: which action
   jevbrev action FILE ANSWERS.json                     read call 1's answers
   jevbrev frames FILE ACTION REQUEST [--known JSON] [--context JSON]
@@ -157,10 +159,45 @@ fn run(args: &[String]) -> Res {
             }
         }
         "import" => {
+            let into = flag(&flags, "into", &["into"])?;
+            let p = want(&pos, 1, "import OPENAPI.json [--into FILE]")?;
+            let openapi = read_text(p[0])?;
+            match into {
+                None => print!(
+                    "{}",
+                    jevbrev::import_openapi(&openapi, p[0]).map_err(Fail::Problem)?
+                ),
+                Some(file) => {
+                    let (text, report) =
+                        jevbrev::import_into(&openapi, p[0], &read_text(file)?, file)
+                            .map_err(Fail::Problem)?;
+                    print!("{text}");
+                    eprintln!(
+                        "{}",
+                        serde_json::to_string_pretty(&report).expect("serialises")
+                    );
+                }
+            }
+            Ok(())
+        }
+        "fmt" => {
             flag(&flags, "", &[])?;
-            let p = want(&pos, 1, "import OPENAPI.json")?;
-            let draft = jevbrev::import_openapi(&read_text(p[0])?, p[0]).map_err(Fail::Problem)?;
-            print!("{draft}");
+            let p = want(&pos, 1, "fmt FILE")?;
+            let text = read_text(p[0])?;
+            let b = jevbrev::parse(&text).map_err(|d| {
+                Fail::Problem(
+                    d.iter()
+                        .map(|x| format!("{}:{x}", p[0]))
+                        .collect::<Vec<_>>()
+                        .join("\n"),
+                )
+            })?;
+            let mut out = jevbrev::to_text(&b, &jevbrev::fmt::leading_comments(&text));
+            for l in jevbrev::fmt::trailing_comments(&text) {
+                out.push_str(&l);
+                out.push('\n');
+            }
+            print!("{out}");
             Ok(())
         }
         "menu" => {

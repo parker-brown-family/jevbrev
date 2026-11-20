@@ -89,7 +89,7 @@ A spotter over-finds on purpose. Jev decides which spans matter. jevbrev never i
 request ──► call 1: which action ──► call 2: every input question for that action ──► read ──► HTTP call, or a question back to her
 ```
 
-The second call has to wait for the first, because the chosen action decides which questions exist. All questions about one request go into one call ([Parallel questions](https://docs.typesafe.ai/cookbooks/parallel_questions)).
+The second call waits for the first, because the chosen action decides which questions exist. Within a call, every question about the request goes together ([Parallel questions](https://docs.typesafe.ai/cookbooks/parallel_questions)). The rule is to use a second call only when the first answer decides what it asks. Asking every action's questions in one call, as TypeSafe's function-calling cookbook does, has not been measured here yet ([issue 1](https://github.com/parker-brown-family/jevbrev/issues/1)). If it matches the two-call results, it becomes the default.
 
 The same operations exist in three places:
 
@@ -347,7 +347,7 @@ move_client_series  POST /clients/{client}/bookings/move  change
 
 `jevbrev tools FILE --style anthropic|openai|mcp` prints the actions as tool definitions with JSON Schema inputs. `jevbrev openapi FILE` prints OpenAPI 3.1 for documentation tools, with the words, types and roles kept under `x-jevbrev`.
 
-## 5. Starting from OpenAPI
+## 5. Starting from OpenAPI, and keeping up with it
 
 ```sh
 jevbrev import openapi.json > api.brev
@@ -355,6 +355,16 @@ jevbrev check api.brev
 ```
 
 `import` reads OpenAPI 3 as JSON (convert YAML first, for example with `yq -o=json`). It carries across the method, path, path and query parameters, JSON request body properties, plain types, `enum`s as `one:` types, and each summary whole. An input with no description gets `?`. Every action is marked `read?` (GET) or `change?` (anything else). Header and cookie parameters are skipped with a comment. `check` then lists everything left to write.
+
+When the API changes:
+
+```sh
+jevbrev import openapi.json --into api.brev > api.new.brev
+```
+
+The API decides which actions and inputs exist, each action's method and path, and whether an input is required. The existing file keeps everything a person decided: words, summaries, confirmed read or change, types, roles, role groups and examples. New actions and inputs arrive as `?`. Removed ones are listed in comments at the end of the file, words and all. The report on stderr lists `added`, `removed`, `moved` (method or path) and `requirement_changed`. Comments at the top and bottom of the file are kept. Comments inside blocks are not, because the file is rewritten in the standard layout.
+
+`jevbrev fmt api.brev` prints a file in that standard layout, with aligned columns.
 
 ## 6. Writing the words
 

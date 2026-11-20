@@ -67,3 +67,15 @@ test("given values skip the question", () => {
   const r = brev.read("cancel_booking", call2, {});
   assert.equal(r.complete, true);
 });
+
+test("re-import keeps the words", () => {
+  const openapi = JSON.stringify({ openapi: "3.1.0", info: { title: "Shop" }, servers: [{ url: "https://shop.example" }],
+    paths: { "/items": { get: { operationId: "find", parameters: [
+      { name: "name", in: "query", required: true, schema: { type: "string" } },
+      { name: "colour", in: "query", schema: { type: "string" } }] } } } });
+  const existing = "api Shop  https://shop.example\n\nread find  GET /items\n  Find items by name\n  name  str  which item, by name\n";
+  const { text, report } = Brev.mergeOpenapi(openapi, "shop.json", existing);
+  assert.match(text, /name +str +which item, by name/);
+  assert.match(text, /colour\? +str +\?/);
+  assert.deepEqual(report.added, ["find.colour"]);
+});
