@@ -1,6 +1,6 @@
 // The npm package must print exactly what the Rust crate prints. These compare the WebAssembly
 // build with the golden files the Rust tests check. No test here calls Jev.
-//   node --test tests/node/
+//   node --test tests/node/wasm.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";

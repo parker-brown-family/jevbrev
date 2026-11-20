@@ -10,6 +10,6 @@
   "main": "jevbrev.js",
   "types": "jevbrev.d.ts",
   "files": ["jevbrev.js", "jevbrev.d.ts", "jevbrev_bg.wasm", "jevbrev_bg.wasm.d.ts", "README.md", "LICENSE-MIT", "LICENSE-APACHE"],
-  "engines": { "node": ">=18" },
+  "engines": { "node": ">=22" },
   "sideEffects": false
 }

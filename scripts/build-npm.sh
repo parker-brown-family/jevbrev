@@ -24,5 +24,5 @@ if [[ "$crate" != "$pkg" ]]; then
   exit 1
 fi
 
-node --test tests/node/
+node --test tests/node/wasm.test.mjs
 echo "npm/ is ready: $(du -h npm/jevbrev_bg.wasm | cut -f1) of WebAssembly"
