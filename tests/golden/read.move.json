@@ -3,37 +3,37 @@
   "inputs": {
     "client": {
       "state": "said",
-      "value": "Priya Shah",
+      "value": "Alex Morgan",
       "p": 0.97
     },
     "from_weekday": {
       "state": "said",
-      "value": "Wednesday",
+      "value": "Tuesday",
       "p": 1.0
     },
     "from_time": {
       "state": "said",
       "value": "10:00",
-      "p": 0.99
+      "p": 1.0
     },
     "to_weekday": {
       "state": "said",
-      "value": "Friday",
+      "value": "Thursday",
       "p": 1.0
     },
     "to_time": {
       "state": "said",
-      "value": "11:00",
+      "value": "14:30",
       "p": 1.0
     },
     "starting": {
       "state": "said",
       "value": "next month",
-      "p": 0.9
+      "p": 0.82
     },
     "count": {
       "state": "unsaid",
-      "p": 0.03
+      "p": 0.24
     }
   },
   "complete": true

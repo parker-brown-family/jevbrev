@@ -1,0 +1,29 @@
+api Example shop  https://shop.example/api
+request  what the customer typed
+
+read find_items  GET /items
+  Find items in the catalogue by part of their name
+  name    str  which item, by name
+  limit?  int  how many items to show
+  yes do you have any blue mugs
+  no  cancel the blue mug order
+
+read find_orders  GET /orders
+  List a customer's orders, newest first
+  since?  date  how far back to look
+  yes what did I order last month
+  no  cancel my last order
+
+change move_delivery  PATCH /orders/{order}/delivery
+  Change the day an order is delivered
+  order  ref:find_orders  which order's delivery changes
+  day    date             which day the order should arrive instead
+  yes can my order come on Friday instead
+  no  where is my order
+
+change cancel_order  POST /orders/{order}/cancel
+  Cancel one order and refund the customer
+  order   ref:find_orders                which order to cancel
+  reason  one:changed_mind|damaged|late  why the order is being cancelled
+  yes cancel my last order, it arrived broken
+  no  where is my order

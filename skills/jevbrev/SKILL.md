@@ -6,7 +6,7 @@ license: MIT OR Apache-2.0
 
 # jevbrev
 
-A `.brev` file describes an API in the words a person would use. jevbrev turns it into Jev's questions, reads Jev's answers, and builds the HTTP call. It never calls Jev and never holds a key.
+A `.brev` file is a condensed API definition: one line per action and one per input, in the words a person would use. jevbrev turns it into Jev's questions, reads Jev's answers, builds the HTTP call, and prints compact definitions for language models. It never calls Jev and never holds a key.
 
 The full guide is `docs/agents.md` in https://github.com/parker-brown-family/jevbrev. The specification is `docs/using-brev.md`, with every request and answer shown. Read both before your first `.brev`. This page is the short version.
 

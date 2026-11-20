@@ -3,7 +3,7 @@
 A `.brev` file describes an HTTP API in the words a person would use to ask for each action. You write it once and keep it beside the API it describes. Code then uses it, on every request, to do three things:
 
 1. Write the questions Jev (TypeSafe's System One model) answers about the person's request.
-2. Read Jev's answers into the action, the inputs she said, the inputs she did not, and their values.
+2. Read Jev's answers into the action, the inputs the request gives, the inputs it does not, and their values.
 3. Build the HTTP call. A language model can also call the API from the short text or tool definitions jevbrev prints.
 
 Jev never reads the `.brev` file itself. It answers short, single-fact questions that jevbrev writes from the file. This is the TypeSafe pattern of building questions from a spec, described in the [Function calling](https://docs.typesafe.ai/cookbooks/function_calling) cookbook, applied to HTTP APIs. jevbrev never calls Jev and never holds a key: it prints request bodies and reads answers, and your code sends them.
@@ -16,7 +16,7 @@ Read these TypeSafe pages first. This document assumes them:
 |---|---|
 | [API reference](https://docs.typesafe.ai/api) | request body (`state`, `model`, `questions`), Noul and Choice answers |
 | [Choice](https://docs.typesafe.ai/primitives/choice) | the action menu, role questions and picks |
-| [Noul](https://docs.typesafe.ai/primitives/noul) | "did she say it" questions |
+| [Noul](https://docs.typesafe.ai/primitives/noul) | "does the request say it" questions |
 | [State](https://docs.typesafe.ai/concepts/state) | why the request and the candidates go in `state`, not in the question |
 | [Pre-parsed value extraction](https://docs.typesafe.ai/cookbooks/pre_parsed_value_extraction_cookbook) | code finds candidate values, Jev picks, code copies the value verbatim |
 | [Parallel questions](https://docs.typesafe.ai/cookbooks/parallel_questions) | why all questions about one request go in one call |
@@ -45,7 +45,7 @@ change move_client_series  POST /clients/{client}/bookings/move
   to_time       time     schedule.moves_to     what time the appointments should move to
   starting      date                           when the move starts: a date, a week or a month
   count?        int                            how many appointments to move
-  yes shift Priya's Wednesday 10:00s to Friday at 11:00 from next month
+  yes move Alex's Tuesday 10:00s to Thursday at 14:30 from next month
   no  Sam used to come Thursdays at 5
 ```
 
@@ -86,7 +86,7 @@ A spotter over-finds on purpose. Jev decides which spans matter. jevbrev never i
 ## 3. Using it in code: two Jev calls per request
 
 ```
-request ──► call 1: which action ──► call 2: every input question for that action ──► read ──► HTTP call, or a question back to her
+request ──► call 1: which action ──► call 2: every input question for that action ──► read ──► HTTP call, or a question back to the person
 ```
 
 The second call waits for the first, because the chosen action decides which questions exist. Within a call, every question about the request goes together ([Parallel questions](https://docs.typesafe.ai/cookbooks/parallel_questions)). The rule is to use a second call only when the first answer decides what it asks. Asking every action's questions in one call, as TypeSafe's function-calling cookbook does, has not been measured here yet ([issue 1](https://github.com/parker-brown-family/jevbrev/issues/1)). If it matches the two-call results, it becomes the default.
@@ -101,7 +101,7 @@ The same operations exist in three places:
 | call 2 | `frames(&brev, action, request, known, context)` | `brev.frames(action, request, known?, context?)` | `frames FILE ACTION REQUEST [--known JSON] [--context JSON]` |
 | read call 2 | `read(&brev, action, &call2, &answers)` | `brev.read(action, call2, answers)` | `read FILE ACTION CALL2.json ANSWERS.json` |
 | HTTP call | `http_call(&brev, &read)` | `brev.httpCall(read)` (throws if not complete) | `http FILE READ.json` |
-| what to ask her | `ask_for(&brev, &read)` | `brev.askFor(read)` | `ask FILE READ.json` |
+| what to ask the person | `ask_for(&brev, &read)` | `brev.askFor(read)` | `ask FILE READ.json` |
 
 `context` is an optional object whose fields go into `state` beside `request`, such as who is signed in. A JSON file argument to the command may be `-` for stdin.
 
@@ -112,7 +112,7 @@ import { Brev } from "@parker-brown-family/jevbrev";
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 
 const brev = Brev.load(await readFile("clinic.brev", "utf8"));
-const request = "shift Priya's Wednesday 10:00s to Friday at 11:00 from next month";
+const request = "move Alex's Tuesday 10:00s to Thursday at 14:30 from next month";
 const call1 = brev.menu(request);
 ```
 
@@ -122,7 +122,7 @@ const call1 = brev.menu(request);
 {
   "model": "jev-latest",
   "state": {
-    "request": "shift Priya's Wednesday 10:00s to Friday at 11:00 from next month"
+    "request": "move Alex's Tuesday 10:00s to Thursday at 14:30 from next month"
   },
   "questions": {
     "action": {
@@ -162,7 +162,7 @@ const pick = brev.readAction(await client.systemOne(call1));
 
 ```ts
 const call2 = brev.frames("move_client_series", request, {
-  client: ["Priya Shah", "Sam Ortiz", "Jordan Lee"],
+  client: ["Alex Morgan", "Sam Ortiz", "Jordan Lee"],
 });
 ```
 
@@ -185,15 +185,15 @@ For the request above, `call2` is (two `role.N` questions shortened here; jevbre
 {
   "model": "jev-latest",
   "state": {
-    "request": "shift Priya's Wednesday 10:00s to Friday at 11:00 from next month",
-    "candidates": ["Wednesday", "Friday", "10:00", "11:00"],
-    "client_candidates": ["Priya Shah", "Sam Ortiz", "Jordan Lee"],
-    "starting_candidates": ["Wednesday", "Friday", "next month"]
+    "request": "move Alex's Tuesday 10:00s to Thursday at 14:30 from next month",
+    "candidates": ["Tuesday", "Thursday", "10:00", "14:30"],
+    "client_candidates": ["Alex Morgan", "Sam Ortiz", "Jordan Lee"],
+    "starting_candidates": ["Tuesday", "Thursday", "next month"]
   },
   "questions": {
     "role.0": {
       "type": "choice",
-      "instructions": "In `request`, what is \"Wednesday\" (`candidates[0]`)?",
+      "instructions": "In `request`, what is \"Tuesday\" (`candidates[0]`)?",
       "criteria": {
         "now": "the weekday the appointments are on now, before the move",
         "moves_to": "the weekday the appointments should move to",
@@ -215,13 +215,13 @@ For the request above, `call2` is (two `role.N` questions shortened here; jevbre
     "pick.client": {
       "type": "choice",
       "instructions": "Which of `client_candidates` is which client's appointments move?",
-      "criteria": { "Priya Shah": null, "Sam Ortiz": null, "Jordan Lee": null, "none_of_these": "`request` does not say this." }
+      "criteria": { "Alex Morgan": null, "Sam Ortiz": null, "Jordan Lee": null, "none_of_these": "`request` does not say this." }
     },
     "said.starting": { "type": "noul", "instructions": "Does `request` say when the move starts: a date, a week or a month?" },
     "pick.starting": {
       "type": "choice",
       "instructions": "Which of `starting_candidates` is when the move starts: a date, a week or a month?",
-      "criteria": { "Wednesday": null, "Friday": null, "next month": null, "none_of_these": "`request` does not say this." }
+      "criteria": { "Tuesday": null, "Thursday": null, "next month": null, "none_of_these": "`request` does not say this." }
     },
     "said.count": { "type": "noul", "instructions": "Does `request` say how many appointments to move?" }
   }
@@ -241,14 +241,18 @@ const read = brev.read("move_client_series", call2, answers2);
 
 `read` takes the call 2 body as well as the answers. It re-finds the candidates in `call2.state.request` and refuses a body whose candidates differ, so answers are never read against the wrong spans.
 
-The role answers here are **measured**; the `said.client`, `pick.*` and `said.count` answers are **illustrative**:
+Every answer here is **measured**: real Jev (`jev-1.14`) on 2026-11-20. The whole request, both calls, cost $0.000065:
 
 ```json
 "role.0": { "type": "choice", "choice": "now",      "probabilities": { "now": 1.0,  "moves_to": 0.0, "stays": 0.0, "neither": 0.0 } },
 "role.1": { "type": "choice", "choice": "moves_to", "probabilities": { "now": 0.0,  "moves_to": 1.0, "stays": 0.0, "neither": 0.0 } },
-"role.2": { "type": "choice", "choice": "now",      "probabilities": { "now": 0.99, "moves_to": 0.0, "stays": 0.0, "neither": 0.01 } },
+"role.2": { "type": "choice", "choice": "now",      "probabilities": { "now": 1.0,  "moves_to": 0.0, "stays": 0.0, "neither": 0.0 } },
 "role.3": { "type": "choice", "choice": "moves_to", "probabilities": { "now": 0.0,  "moves_to": 1.0, "stays": 0.0, "neither": 0.0 } },
-"said.starting": { "type": "noul", "noul": 0.92 }
+"said.client":   { "type": "noul", "noul": 0.97 },
+"pick.client":   { "type": "choice", "choice": "Alex Morgan", "probabilities": { "Alex Morgan": 1.0, "Sam Ortiz": 0.0, "Jordan Lee": 0.0, "none_of_these": 0.0 } },
+"said.starting": { "type": "noul", "noul": 0.91 },
+"pick.starting": { "type": "choice", "choice": "next month", "probabilities": { "Tuesday": 0.12, "Thursday": 0.04, "next month": 0.82, "none_of_these": 0.02 } },
+"said.count":    { "type": "noul", "noul": 0.24 }
 ```
 
 `read` returns every input, in file order, in one of four states:
@@ -257,13 +261,13 @@ The role answers here are **measured**; the `said.client`, `pick.*` and `said.co
 {
   "action": "move_client_series",
   "inputs": {
-    "client":       { "state": "said",   "value": "Priya Shah", "p": 0.97 },
-    "from_weekday": { "state": "said",   "value": "Wednesday",  "p": 1.0 },
-    "from_time":    { "state": "said",   "value": "10:00",      "p": 0.99 },
-    "to_weekday":   { "state": "said",   "value": "Friday",     "p": 1.0 },
-    "to_time":      { "state": "said",   "value": "11:00",      "p": 1.0 },
-    "starting":     { "state": "said",   "value": "next month", "p": 0.9 },
-    "count":        { "state": "unsaid", "p": 0.03 }
+    "client":       { "state": "said",   "value": "Alex Morgan", "p": 0.97 },
+    "from_weekday": { "state": "said",   "value": "Tuesday",     "p": 1.0 },
+    "from_time":    { "state": "said",   "value": "10:00",       "p": 1.0 },
+    "to_weekday":   { "state": "said",   "value": "Thursday",    "p": 1.0 },
+    "to_time":      { "state": "said",   "value": "14:30",       "p": 1.0 },
+    "starting":     { "state": "said",   "value": "next month",  "p": 0.82 },
+    "count":        { "state": "unsaid", "p": 0.24 }
   },
   "complete": true
 }
@@ -272,8 +276,8 @@ The role answers here are **measured**; the `said.client`, `pick.*` and `said.co
 | State | Meaning | What the caller does |
 |---|---|---|
 | `said` | The request says it. `value` is a span of the request, a `one:` value, or a `known` value. `value` is absent when there was nothing to read it from (a `str` or `int` input with no `known` values). | Use the value. |
-| `unsaid` | The request does not say it. | Required: ask her. Optional: leave it out, and the API's default applies. |
-| `unsure` | Jev's answer was not clear enough, or two different values claim it (listed in `claims`). | Ask her. Never guess. |
+| `unsaid` | The request does not say it. | Required: ask the person. Optional: leave it out, and the API's default applies. |
+| `unsure` | Jev's answer was not clear enough, or two different values claim it (listed in `claims`). | Ask the person. Never guess. |
 | `unasked` | No answer came back for its question. | Retry the call, or fail. Never treat it as `unsaid`. |
 
 `p` is the probability behind the state, and is absent when no single answer decided it. `complete` is `true` only when every required input is `said` **and** has a value.
@@ -310,13 +314,13 @@ if (read.complete) {
   "method": "POST",
   "base_url": "https://clinic.example/api",
   "path": "/clients/{client}/bookings/move",
-  "path_values": { "client": "Priya Shah" },
+  "path_values": { "client": "Alex Morgan" },
   "change": true,
   "body": {
-    "from_weekday": "Wednesday",
+    "from_weekday": "Tuesday",
     "from_time": "10:00",
-    "to_weekday": "Friday",
-    "to_time": "11:00",
+    "to_weekday": "Thursday",
+    "to_time": "14:30",
     "starting": "next month"
   }
 }
@@ -371,7 +375,7 @@ The API decides which actions and inputs exist, each action's method and path, a
 - **An input's WORDS complete "Does `request` say ___?"** Use an indirect question in the person's words: `which weekday the appointments should move to`. Never the parameter name, and never "the destination weekday". TypeSafe makes the same point: a question named after its parameter "gives the command nothing to match against" ([Function calling](https://docs.typesafe.ai/cookbooks/function_calling)).
 - **One fact per input.** "which weekday and time they move to" is two inputs.
 - **The summary is the menu option.** One complete line saying what the action does, and to what.
-- **Use a role group when two or more inputs can take the same kind of word.** "Wednesday" can be where the appointments are now or where they move to. Include a role for a word that fills both (`stays=now+moves_to`) and one for a word that is about something else (`neither`).
+- **Use a role group when two or more inputs can take the same kind of word.** "Tuesday" can be where the appointments are now or where they move to. Include a role for a word that fills both (`stays=now+moves_to`) and one for a word that is about something else (`neither`).
 - **`yes` and `no` examples are for calibration by hand.** Automated tests never call Jev. They compare jevbrev's output against stored files.
 
 ## 7. Measured
@@ -381,7 +385,7 @@ On 2026-11-20 the same three studies that motivated jevbrev were re-run from a 1
 | Job | Study before jevbrev | Through jevbrev | Mean cost a call |
 |---|---|---|---|
 | Which action (36 labelled requests) | 36 / 36 | **36 / 36** | $0.000035 |
-| Did she say every required input (12) | 12 / 12 | **12 / 12** | $0.000027 |
+| Does the request give every required input (12) | 12 / 12 | **12 / 12** | $0.000027 |
 | Values read for a move (22, in 8 held-out sentences) | 19 / 22 | **22 / 22** | $0.000035 |
 | Presence of each move input (40) | 36 / 40 | **38 / 40** | |
 

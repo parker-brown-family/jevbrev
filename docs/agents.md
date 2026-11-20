@@ -112,7 +112,7 @@ Change words, not code. Re-run until the tuning set is right, then run the held-
 Follow docs/using-brev.md section 3. The things agents get wrong:
 
 - Load the file once at start-up (`Brev.load`). It throws on any `check` problem, which is what you want.
-- Pass what the app already knows as `known`: a single string for a value (the client on screen), a list for choices (the practice's client names).
+- Pass what the app already knows as `known`: a single string for a value (the client on screen), a list for choices (such as customer names).
 - An empty `questions` in call 2 means don't send it. Read with `{}`.
 - `unsure` means ask the person. `unasked` means retry or fail. Neither is `unsaid`.
 - Normalise values ("next month" to a date) and resolve `ref` values to IDs in app code. jevbrev returns words as written.

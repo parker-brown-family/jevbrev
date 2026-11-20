@@ -40,33 +40,33 @@ fn clinic() -> jevbrev::Brev {
     jevbrev::load(&std::fs::read_to_string(path("examples/clinic.brev")).unwrap()).unwrap()
 }
 
-const PRIYA: &str = "shift Priya's Wednesday 10:00s to Friday at 11:00 from next month";
+const MOVE: &str = "move Alex's Tuesday 10:00s to Thursday at 14:30 from next month";
 const SAM: &str =
     "Sam used to come Thursdays at 5, but move his current Monday 9:30s to Monday 8:30";
 
 #[test]
 fn menu() {
     golden(
-        "menu.priya.json",
-        &pretty(&jevbrev::menu(&clinic(), PRIYA, None)),
+        "menu.move.json",
+        &pretty(&jevbrev::menu(&clinic(), MOVE, None)),
     );
 }
 
 #[test]
-fn priya_end_to_end() {
+fn move_end_to_end() {
     let b = clinic();
-    let known = json!({ "client": ["Priya Shah", "Sam Ortiz", "Jordan Lee"] });
-    let call2 = jevbrev::frames(&b, "move_client_series", PRIYA, known.as_object(), None).unwrap();
-    golden("frames.priya.json", &pretty(&call2));
-    let answers: Value = serde_json::from_str(&fixture("answers.priya.json")).unwrap();
+    let known = json!({ "client": ["Alex Morgan", "Sam Ortiz", "Jordan Lee"] });
+    let call2 = jevbrev::frames(&b, "move_client_series", MOVE, known.as_object(), None).unwrap();
+    golden("frames.move.json", &pretty(&call2));
+    let answers: Value = serde_json::from_str(&fixture("answers.move.json")).unwrap();
     let read = jevbrev::read(&b, "move_client_series", &call2, &answers).unwrap();
     golden(
-        "read.priya.json",
+        "read.move.json",
         &pretty(&serde_json::to_value(&read).unwrap()),
     );
     assert!(read.complete);
     golden(
-        "http.priya.json",
+        "http.move.json",
         &pretty(&jevbrev::http_call(&b, &read).unwrap()),
     );
     assert_eq!(jevbrev::ask_for(&b, &read), None);
@@ -253,9 +253,28 @@ fn one_of_inputs_are_picked_from_their_values() {
 #[test]
 fn a_pick_that_disagrees_with_its_noul_is_unsure() {
     let b = clinic();
-    let call2 = jevbrev::frames(&b, "move_client_series", PRIYA, None, None).unwrap();
-    let mut answers: Value = serde_json::from_str(&fixture("answers.priya.json")).unwrap();
+    let call2 = jevbrev::frames(&b, "move_client_series", MOVE, None, None).unwrap();
+    let mut answers: Value = serde_json::from_str(&fixture("answers.move.json")).unwrap();
     answers["answers"]["said.starting"] = json!({ "type": "noul", "noul": 0.2 });
     let read = jevbrev::read(&b, "move_client_series", &call2, &answers).unwrap();
     assert_eq!(read.inputs["starting"]["state"], "unsure");
+}
+
+#[test]
+fn every_example_loads_and_the_readme_quotes_the_shop() {
+    for name in ["clinic", "shop"] {
+        let text = std::fs::read_to_string(path(&format!("examples/{name}.brev"))).unwrap();
+        if let Err(d) = jevbrev::load(&text) {
+            let lines: Vec<String> = d.iter().map(|x| x.to_string()).collect();
+            panic!("examples/{name}.brev: {}", lines.join("; "));
+        }
+    }
+    let readme = std::fs::read_to_string(path("README.md")).unwrap();
+    let shop = std::fs::read_to_string(path("examples/shop.brev")).unwrap();
+    for line in shop
+        .lines()
+        .filter(|l| l.starts_with("change move_delivery") || l.starts_with("  day "))
+    {
+        assert!(readme.contains(line), "README.md does not quote: {line}");
+    }
 }

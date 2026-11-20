@@ -1,6 +1,6 @@
 # Getting started: describing your API
 
-This is the path from "we have an API" to "our app understands what people ask for". It takes an afternoon for a small API. An agent can do most of it, and [docs/agents.md](agents.md) tells it how. A person should still read the words and the scores.
+This is the path from "we have an API" to a short, checked, calibrated `.brev` file that describes it. It takes an afternoon for a small API. An agent can do most of it, and [docs/agents.md](agents.md) tells it how. A person should still read the words and the scores.
 
 ## 1. Install
 
@@ -16,7 +16,7 @@ If your API has an OpenAPI file (JSON):
 jevbrev import openapi.json > api.brev
 ```
 
-That copies every action and input across, with each summary whole. If your API has no OpenAPI file, start from [`examples/clinic.brev`](../examples/clinic.brev) and write one action at a time.
+That copies every action and input across, with each summary whole. If your API has no OpenAPI file, start from [`examples/shop.brev`](../examples/shop.brev) and write one action at a time.
 
 ## 3. Fill in what only a person knows
 
@@ -27,10 +27,10 @@ jevbrev check api.brev
 `check` lists every line that still needs something, with its line number. Usually that is:
 
 - **Read or change?** Each action starts `read?` or `change?`. Remove the `?` once you are sure. A `change` must show a preview and wait for the person to confirm.
-- **A summary.** One line under each action, in your users' words: "Move a client's recurring appointments to another day and time". Jev picks the action from these lines, so make them plain and complete.
-- **Words for each input.** Replace each `?` with words that finish the sentence "Does the request say ___?". For example: `which weekday the appointments should move to`. Never just repeat the field name.
-- **Better types.** Change `str` to `weekday`, `time`, `date`, `one:keep|reschedule`, or `ref:find_client` where that is what the input is. These let jevbrev read the value out of what the person typed.
-- **Role groups**, when two inputs take the same kind of word, such as the day appointments are on now and the day they move to. Copy the `roles schedule` block from the example.
+- **A summary.** One line under each action, in your users' words: "Change the day an order is delivered". Jev picks the action from these lines, so make them plain and complete.
+- **Words for each input.** Replace each `?` with words that finish the sentence "Does the request say ___?". For example: `which day the order should arrive instead`. Never just repeat the field name.
+- **Better types.** Change `str` to `weekday`, `time`, `date`, `one:changed_mind|damaged|late`, or `ref:find_orders` where that is what the input is. These let jevbrev read the value out of what the person typed.
+- **Role groups**, when two inputs take the same kind of word, such as the day something happens now and the day it moves to. Copy the `roles schedule` block from [`examples/clinic.brev`](../examples/clinic.brev).
 
 Run `check` again until it says `ok`.
 

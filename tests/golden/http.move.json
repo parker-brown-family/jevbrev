@@ -3,14 +3,14 @@
   "base_url": "https://clinic.example/api",
   "path": "/clients/{client}/bookings/move",
   "path_values": {
-    "client": "Priya Shah"
+    "client": "Alex Morgan"
   },
   "change": true,
   "body": {
-    "from_weekday": "Wednesday",
+    "from_weekday": "Tuesday",
     "from_time": "10:00",
-    "to_weekday": "Friday",
-    "to_time": "11:00",
+    "to_weekday": "Thursday",
+    "to_time": "14:30",
     "starting": "next month"
   }
 }

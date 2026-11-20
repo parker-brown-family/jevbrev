@@ -126,9 +126,9 @@ mod tests {
         assert_eq!(
             texts(
                 Type::Time,
-                "shift Priya's Wednesday 10:00s to Friday at 11:00"
+                "move Alex's Tuesday 10:00s to Thursday at 14:30"
             ),
-            ["10:00", "11:00"]
+            ["10:00", "14:30"]
         );
         assert_eq!(
             texts(Type::Time, "at 3pm or 4 pm, or 9.15"),

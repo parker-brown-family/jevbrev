@@ -1,7 +1,7 @@
 {
   "model": "jev-latest",
   "state": {
-    "request": "shift Priya's Wednesday 10:00s to Friday at 11:00 from next month"
+    "request": "move Alex's Tuesday 10:00s to Thursday at 14:30 from next month"
   },
   "questions": {
     "action": {

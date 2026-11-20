@@ -1,28 +1,28 @@
 {
   "model": "jev-latest",
   "state": {
-    "request": "shift Priya's Wednesday 10:00s to Friday at 11:00 from next month",
+    "request": "move Alex's Tuesday 10:00s to Thursday at 14:30 from next month",
     "candidates": [
-      "Wednesday",
-      "Friday",
+      "Tuesday",
+      "Thursday",
       "10:00",
-      "11:00"
+      "14:30"
     ],
     "client_candidates": [
-      "Priya Shah",
+      "Alex Morgan",
       "Sam Ortiz",
       "Jordan Lee"
     ],
     "starting_candidates": [
-      "Wednesday",
-      "Friday",
+      "Tuesday",
+      "Thursday",
       "next month"
     ]
   },
   "questions": {
     "role.0": {
       "type": "choice",
-      "instructions": "In `request`, what is \"Wednesday\" (`candidates[0]`)?",
+      "instructions": "In `request`, what is \"Tuesday\" (`candidates[0]`)?",
       "criteria": {
         "now": "the weekday the appointments are on now, before the move",
         "moves_to": "the weekday the appointments should move to",
@@ -32,7 +32,7 @@
     },
     "role.1": {
       "type": "choice",
-      "instructions": "In `request`, what is \"Friday\" (`candidates[1]`)?",
+      "instructions": "In `request`, what is \"Thursday\" (`candidates[1]`)?",
       "criteria": {
         "now": "the weekday the appointments are on now, before the move",
         "moves_to": "the weekday the appointments should move to",
@@ -52,7 +52,7 @@
     },
     "role.3": {
       "type": "choice",
-      "instructions": "In `request`, what is \"11:00\" (`candidates[3]`)?",
+      "instructions": "In `request`, what is \"14:30\" (`candidates[3]`)?",
       "criteria": {
         "now": "the time the appointments are on now, before the move",
         "moves_to": "the time the appointments should move to",
@@ -68,7 +68,7 @@
       "type": "choice",
       "instructions": "Which of `client_candidates` is which client's appointments move?",
       "criteria": {
-        "Priya Shah": null,
+        "Alex Morgan": null,
         "Sam Ortiz": null,
         "Jordan Lee": null,
         "none_of_these": "`request` does not say this."
@@ -82,8 +82,8 @@
       "type": "choice",
       "instructions": "Which of `starting_candidates` is when the move starts: a date, a week or a month?",
       "criteria": {
-        "Wednesday": null,
-        "Friday": null,
+        "Tuesday": null,
+        "Thursday": null,
         "next month": null,
         "none_of_these": "`request` does not say this."
       }

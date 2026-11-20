@@ -1,7 +1,7 @@
 {
   "name": "@parker-brown-family/jevbrev",
   "version": "0.2.0",
-  "description": "Short API definitions that code turns into Jev (TypeSafe System One) questions, answer readers and HTTP calls",
+  "description": "Condensed API definitions: one short file that becomes Jev (TypeSafe System One) questions, answer readers, HTTP calls and compact definitions for language models",
   "license": "MIT OR Apache-2.0",
   "repository": { "type": "git", "url": "git+https://github.com/parker-brown-family/jevbrev.git" },
   "homepage": "https://github.com/parker-brown-family/jevbrev#readme",

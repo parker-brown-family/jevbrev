@@ -5,7 +5,7 @@ use std::io::Read as _;
 use std::process::ExitCode;
 
 const USAGE: &str = "\
-jevbrev: short API definitions that code turns into Jev questions and HTTP calls
+jevbrev: condensed API definitions, turned into Jev questions, HTTP calls and language-model definitions
 
 USAGE
   jevbrev check FILE                                   every problem, with its line; exit 1 if any

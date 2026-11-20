@@ -12,20 +12,20 @@ const root = new URL("../../", import.meta.url);
 const read = (p) => readFileSync(new URL(p, root), "utf8");
 const golden = (p) => JSON.parse(read(`tests/golden/${p}`));
 
-const PRIYA = "shift Priya's Wednesday 10:00s to Friday at 11:00 from next month";
+const MOVE = "move Alex's Tuesday 10:00s to Thursday at 14:30 from next month";
 const SAM = "Sam used to come Thursdays at 5, but move his current Monday 9:30s to Monday 8:30";
 const brev = Brev.load(read("examples/clinic.brev"));
 
 test("call 1 matches the crate", () => {
-  assert.deepEqual(brev.menu(PRIYA), golden("menu.priya.json"));
+  assert.deepEqual(brev.menu(MOVE), golden("menu.move.json"));
 });
 
-test("Priya, end to end", () => {
-  const call2 = brev.frames("move_client_series", PRIYA, { client: ["Priya Shah", "Sam Ortiz", "Jordan Lee"] });
-  assert.deepEqual(call2, golden("frames.priya.json"));
-  const r = brev.read("move_client_series", call2, JSON.parse(read("tests/fixtures/answers.priya.json")));
-  assert.deepEqual(r, golden("read.priya.json"));
-  assert.deepEqual(brev.httpCall(r), golden("http.priya.json"));
+test("moving a series, end to end", () => {
+  const call2 = brev.frames("move_client_series", MOVE, { client: ["Alex Morgan", "Sam Ortiz", "Jordan Lee"] });
+  assert.deepEqual(call2, golden("frames.move.json"));
+  const r = brev.read("move_client_series", call2, JSON.parse(read("tests/fixtures/answers.move.json")));
+  assert.deepEqual(r, golden("read.move.json"));
+  assert.deepEqual(brev.httpCall(r), golden("http.move.json"));
   assert.equal(brev.askFor(r), null);
 });
 
