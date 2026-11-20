@@ -25,12 +25,12 @@ jevbrev never calls Jev and never holds a key. It prints request bodies and read
 |---|---|
 | Command line | `cargo install jevbrev` |
 | Rust | `cargo add jevbrev` |
-| Node and TypeScript (WebAssembly) | `npm install jevbrev` |
+| Node and TypeScript (WebAssembly) | `npm install @parker-brown-family/jevbrev` |
 
 ## In TypeScript
 
 ```ts
-import { Brev } from "jevbrev";
+import { Brev } from "@parker-brown-family/jevbrev";
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 
 const brev = Brev.load(await readFile("clinic.brev", "utf8"));

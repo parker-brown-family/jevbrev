@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 — 2026-11-20
+
+- The npm package is `@parker-brown-family/jevbrev`. The READMEs published with 0.1.0 named it `jevbrev`, which is not on npm. No code changed.
+
 ## 0.1.0 — 2026-11-20
 
 First release.

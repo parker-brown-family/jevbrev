@@ -93,7 +93,7 @@ The second call has to wait for the first, because the chosen action decides whi
 
 The same operations exist in three places:
 
-| | Rust crate `jevbrev` | npm package `jevbrev` (WebAssembly) | Command `jevbrev` |
+| | Rust crate `jevbrev` | npm package `@parker-brown-family/jevbrev` (WebAssembly) | Command `jevbrev` |
 |---|---|---|---|
 | load and check | `jevbrev::load(text)` | `Brev.load(text)` (throws) | `check FILE` |
 | call 1 | `menu(&brev, request, context)` | `brev.menu(request, context?)` | `menu FILE REQUEST [--context JSON]` |
@@ -108,7 +108,7 @@ The same operations exist in three places:
 ### Step 1: the action menu
 
 ```ts
-import { Brev } from "jevbrev";
+import { Brev } from "@parker-brown-family/jevbrev";
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 
 const brev = Brev.load(await readFile("clinic.brev", "utf8"));
