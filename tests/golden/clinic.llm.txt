@@ -1,0 +1,24 @@
+Example clinic bookings · https://clinic.example/api · change actions return a preview; confirm with the person before running
+
+find_client  GET /clients  read
+  Find the clinic's clients by part of their name
+  name: text — which client, by name
+
+list_bookings  GET /bookings  read
+  List bookings for a day, or one client's upcoming bookings
+  client (optional): id of a find_client result — which client's bookings
+  day (optional): date — which day
+
+move_client_series  POST /clients/{client}/bookings/move  change
+  Move a client's recurring appointments from one weekday and time to another, from a date onward
+  client: id of a find_client result — which client's appointments move
+  from_weekday: weekday — which weekday the appointments are on now
+  from_time: time of day — what time the appointments are at now
+  to_weekday: weekday — which weekday the appointments should move to
+  to_time: time of day — what time the appointments should move to
+  starting: date — when the move starts: a date, a week or a month
+  count (optional): whole number — how many appointments to move
+
+cancel_booking  POST /bookings/{booking}/cancel  change
+  Cancel one booking and tell the client
+  booking: id of a list_bookings result — which booking to cancel

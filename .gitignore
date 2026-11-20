@@ -1,0 +1,13 @@
+/target
+/pkg
+/npm/jevbrev_bg.wasm
+/npm/jevbrev.js
+/npm/jevbrev.d.ts
+/npm/jevbrev_bg.wasm.d.ts
+*.actual.json
+.env
+.env.*
+node_modules
+/npm/README.md
+/npm/LICENSE-MIT
+/npm/LICENSE-APACHE

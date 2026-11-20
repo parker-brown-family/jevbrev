@@ -1,0 +1,99 @@
+{
+  "model": "jev-latest",
+  "state": {
+    "request": "Sam used to come Thursdays at 5, but move his current Monday 9:30s to Monday 8:30",
+    "candidates": [
+      "Thursday",
+      "Monday",
+      "Monday",
+      "5",
+      "9:30",
+      "8:30"
+    ],
+    "starting_candidates": [
+      "Monday"
+    ]
+  },
+  "questions": {
+    "role.0": {
+      "type": "choice",
+      "instructions": "In `request`, what is \"Thursday\" (`candidates[0]`)?",
+      "criteria": {
+        "now": "the weekday the appointments are on now, before the move",
+        "moves_to": "the weekday the appointments should move to",
+        "stays": "the weekday the appointments are on now and stay on after the move",
+        "neither": "a weekday from the past, another person, or not about these appointments"
+      }
+    },
+    "role.1": {
+      "type": "choice",
+      "instructions": "In `request`, what is \"Monday\" (`candidates[1]`)?",
+      "criteria": {
+        "now": "the weekday the appointments are on now, before the move",
+        "moves_to": "the weekday the appointments should move to",
+        "stays": "the weekday the appointments are on now and stay on after the move",
+        "neither": "a weekday from the past, another person, or not about these appointments"
+      }
+    },
+    "role.2": {
+      "type": "choice",
+      "instructions": "In `request`, what is \"Monday\" (`candidates[2]`)?",
+      "criteria": {
+        "now": "the weekday the appointments are on now, before the move",
+        "moves_to": "the weekday the appointments should move to",
+        "stays": "the weekday the appointments are on now and stay on after the move",
+        "neither": "a weekday from the past, another person, or not about these appointments"
+      }
+    },
+    "role.3": {
+      "type": "choice",
+      "instructions": "In `request`, what is \"5\" (`candidates[3]`)?",
+      "criteria": {
+        "now": "the time the appointments are on now, before the move",
+        "moves_to": "the time the appointments should move to",
+        "stays": "the time the appointments are on now and stay on after the move",
+        "neither": "a time from the past, another person, or not about these appointments"
+      }
+    },
+    "role.4": {
+      "type": "choice",
+      "instructions": "In `request`, what is \"9:30\" (`candidates[4]`)?",
+      "criteria": {
+        "now": "the time the appointments are on now, before the move",
+        "moves_to": "the time the appointments should move to",
+        "stays": "the time the appointments are on now and stay on after the move",
+        "neither": "a time from the past, another person, or not about these appointments"
+      }
+    },
+    "role.5": {
+      "type": "choice",
+      "instructions": "In `request`, what is \"8:30\" (`candidates[5]`)?",
+      "criteria": {
+        "now": "the time the appointments are on now, before the move",
+        "moves_to": "the time the appointments should move to",
+        "stays": "the time the appointments are on now and stay on after the move",
+        "neither": "a time from the past, another person, or not about these appointments"
+      }
+    },
+    "said.client": {
+      "type": "noul",
+      "instructions": "Does `request` say which client's appointments move?"
+    },
+    "said.starting": {
+      "type": "noul",
+      "instructions": "Does `request` say when the move starts: a date, a week or a month?"
+    },
+    "pick.starting": {
+      "type": "choice",
+      "instructions": "Which of `starting_candidates` is when the move starts: a date, a week or a month?",
+      "criteria": {
+        "Monday": null,
+        "none_of_these": "`request` does not say this."
+      }
+    },
+    "said.count": {
+      "type": "noul",
+      "instructions": "Does `request` say how many appointments to move?"
+    }
+  }
+}

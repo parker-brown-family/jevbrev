@@ -1,0 +1,8 @@
+1  base URL must start with http:// or https://, not "ftp://nowhere"
+3  role group g needs at least two roles
+6  read? is a guess from GET: confirm read or change
+6  path names {item}, which is not an input of find
+7  find's summary looks cut short: write it whole
+8  id has no words: Jev cannot be asked whether the request says it
+12  when is in a role group but str has no spotter: use weekday, time or date
+13  ref:nothing names no action in this file

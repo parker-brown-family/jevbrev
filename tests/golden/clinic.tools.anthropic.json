@@ -1,0 +1,123 @@
+[
+  {
+    "name": "find_client",
+    "description": "Find the clinic's clients by part of their name",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "which client, by name"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "list_bookings",
+    "description": "List bookings for a day, or one client's upcoming bookings",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "client": {
+          "type": "string",
+          "description": "which client's bookings (an id from find_client)"
+        },
+        "day": {
+          "type": "string",
+          "format": "date",
+          "description": "which day"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "move_client_series",
+    "description": "Move a client's recurring appointments from one weekday and time to another, from a date onward. Returns a preview; nothing changes until the person confirms.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "client": {
+          "type": "string",
+          "description": "which client's appointments move (an id from find_client)"
+        },
+        "from_weekday": {
+          "type": "string",
+          "enum": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "description": "which weekday the appointments are on now"
+        },
+        "from_time": {
+          "type": "string",
+          "pattern": "^[0-2][0-9]:[0-5][0-9]$",
+          "description": "what time the appointments are at now (24-hour HH:MM)"
+        },
+        "to_weekday": {
+          "type": "string",
+          "enum": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "description": "which weekday the appointments should move to"
+        },
+        "to_time": {
+          "type": "string",
+          "pattern": "^[0-2][0-9]:[0-5][0-9]$",
+          "description": "what time the appointments should move to (24-hour HH:MM)"
+        },
+        "starting": {
+          "type": "string",
+          "format": "date",
+          "description": "when the move starts: a date, a week or a month"
+        },
+        "count": {
+          "type": "integer",
+          "description": "how many appointments to move"
+        }
+      },
+      "required": [
+        "client",
+        "from_weekday",
+        "from_time",
+        "to_weekday",
+        "to_time",
+        "starting"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "cancel_booking",
+    "description": "Cancel one booking and tell the client. Returns a preview; nothing changes until the person confirms.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "booking": {
+          "type": "string",
+          "description": "which booking to cancel (an id from list_bookings)"
+        }
+      },
+      "required": [
+        "booking"
+      ],
+      "additionalProperties": false
+    }
+  }
+]

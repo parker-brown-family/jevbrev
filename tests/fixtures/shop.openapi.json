@@ -1,0 +1,33 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "Shop" },
+  "servers": [{ "url": "https://shop.example/api" }],
+  "paths": {
+    "/items": {
+      "get": {
+        "operationId": "find_items",
+        "summary": "Find items by part of their name",
+        "parameters": [
+          { "name": "name", "in": "query", "required": true, "schema": { "type": "string" }, "description": "which item, by name" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } },
+          { "name": "X-Trace", "in": "header", "schema": { "type": "string" } }
+        ]
+      }
+    },
+    "/items/{id}/price": {
+      "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+      "put": {
+        "operationId": "reprice",
+        "description": "Change an item's price from a date onward.\nOlder orders keep their price.",
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Price" } } } }
+      }
+    }
+  },
+  "components": { "schemas": { "Price": {
+    "type": "object", "required": ["amount", "from"],
+    "properties": {
+      "amount": { "type": "number", "description": "the new price" },
+      "from": { "type": "string", "format": "date" },
+      "tags": { "type": "array", "items": { "type": "string" } }
+    } } } }
+}

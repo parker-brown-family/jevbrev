@@ -1,0 +1,40 @@
+{
+  "action": "move_client_series",
+  "inputs": {
+    "client": {
+      "state": "said",
+      "value": "Priya Shah",
+      "p": 0.97
+    },
+    "from_weekday": {
+      "state": "said",
+      "value": "Wednesday",
+      "p": 1.0
+    },
+    "from_time": {
+      "state": "said",
+      "value": "10:00",
+      "p": 0.99
+    },
+    "to_weekday": {
+      "state": "said",
+      "value": "Friday",
+      "p": 1.0
+    },
+    "to_time": {
+      "state": "said",
+      "value": "11:00",
+      "p": 1.0
+    },
+    "starting": {
+      "state": "said",
+      "value": "next month",
+      "p": 0.9
+    },
+    "count": {
+      "state": "unsaid",
+      "p": 0.03
+    }
+  },
+  "complete": true
+}

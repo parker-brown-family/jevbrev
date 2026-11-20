@@ -1,0 +1,37 @@
+api Example clinic bookings  https://clinic.example/api
+request  what the practitioner typed
+
+roles schedule
+  now                 the {kind} the appointments are on now, before the move
+  moves_to            the {kind} the appointments should move to
+  stays=now+moves_to  the {kind} the appointments are on now and stay on after the move
+  neither             a {kind} from the past, another person, or not about these appointments
+
+read find_client  GET /clients
+  Find the clinic's clients by part of their name
+  name          str                            which client, by name
+
+read list_bookings  GET /bookings
+  List bookings for a day, or one client's upcoming bookings
+  client?       ref:find_client                which client's bookings
+  day?          date                           which day
+
+change move_client_series  POST /clients/{client}/bookings/move
+  Move a client's recurring appointments from one weekday and time to another, from a date onward
+  client        ref:find_client                which client's appointments move
+  from_weekday  weekday  schedule.now          which weekday the appointments are on now
+  from_time     time     schedule.now          what time the appointments are at now
+  to_weekday    weekday  schedule.moves_to     which weekday the appointments should move to
+  to_time       time     schedule.moves_to     what time the appointments should move to
+  starting      date                           when the move starts: a date, a week or a month
+  count?        int                            how many appointments to move
+  yes shift Priya's Wednesday 10:00s to Friday at 11:00 from next month
+  yes bump Jordan from 1:15 to 2:15 on Wednesdays
+  no  Sam used to come Thursdays at 5
+  no  cancel Jordan's booking
+
+change cancel_booking  POST /bookings/{booking}/cancel
+  Cancel one booking and tell the client
+  booking       ref:list_bookings              which booking to cancel
+  yes cancel Jordan's booking on Friday
+  no  move Jordan to Friday

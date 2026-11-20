@@ -1,0 +1,25 @@
+{
+  "model": "jev-latest",
+  "state": {
+    "request": "close at 4 and keep anyone booked",
+    "existing_candidates": [
+      "keep",
+      "reschedule"
+    ]
+  },
+  "questions": {
+    "said.existing": {
+      "type": "noul",
+      "instructions": "Does `request` say whether bookings outside the new hours are kept or rescheduled?"
+    },
+    "pick.existing": {
+      "type": "choice",
+      "instructions": "Which of `existing_candidates` is whether bookings outside the new hours are kept or rescheduled?",
+      "criteria": {
+        "keep": null,
+        "reschedule": null,
+        "none_of_these": "`request` does not say this."
+      }
+    }
+  }
+}

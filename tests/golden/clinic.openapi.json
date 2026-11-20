@@ -1,0 +1,278 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Example clinic bookings",
+    "version": "0.0.0",
+    "x-jevbrev-request": "what the practitioner typed"
+  },
+  "servers": [
+    {
+      "url": "https://clinic.example/api"
+    }
+  ],
+  "x-jevbrev-roles": {
+    "schedule": {
+      "now": {
+        "covers": [],
+        "words": "the {kind} the appointments are on now, before the move"
+      },
+      "moves_to": {
+        "covers": [],
+        "words": "the {kind} the appointments should move to"
+      },
+      "stays": {
+        "covers": [
+          "now",
+          "moves_to"
+        ],
+        "words": "the {kind} the appointments are on now and stay on after the move"
+      },
+      "neither": {
+        "covers": [],
+        "words": "a {kind} from the past, another person, or not about these appointments"
+      }
+    }
+  },
+  "paths": {
+    "/clients": {
+      "get": {
+        "operationId": "find_client",
+        "summary": "Find the clinic's clients by part of their name",
+        "x-jevbrev": {
+          "kind": "read",
+          "yes": [],
+          "no": []
+        },
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "description": "which client, by name",
+            "schema": {
+              "type": "string"
+            },
+            "x-jevbrev": {
+              "type": "str",
+              "words": "which client, by name"
+            }
+          }
+        ]
+      }
+    },
+    "/bookings": {
+      "get": {
+        "operationId": "list_bookings",
+        "summary": "List bookings for a day, or one client's upcoming bookings",
+        "x-jevbrev": {
+          "kind": "read",
+          "yes": [],
+          "no": []
+        },
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "parameters": [
+          {
+            "name": "client",
+            "in": "query",
+            "required": false,
+            "description": "which client's bookings",
+            "schema": {
+              "type": "string"
+            },
+            "x-jevbrev": {
+              "type": "ref:find_client",
+              "words": "which client's bookings"
+            }
+          },
+          {
+            "name": "day",
+            "in": "query",
+            "required": false,
+            "description": "which day",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "x-jevbrev": {
+              "type": "date",
+              "words": "which day"
+            }
+          }
+        ]
+      }
+    },
+    "/clients/{client}/bookings/move": {
+      "post": {
+        "operationId": "move_client_series",
+        "summary": "Move a client's recurring appointments from one weekday and time to another, from a date onward",
+        "x-jevbrev": {
+          "kind": "change",
+          "yes": [
+            "shift Priya's Wednesday 10:00s to Friday at 11:00 from next month",
+            "bump Jordan from 1:15 to 2:15 on Wednesdays"
+          ],
+          "no": [
+            "Sam used to come Thursdays at 5",
+            "cancel Jordan's booking"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "a preview of the change; nothing changes until it is confirmed"
+          }
+        },
+        "parameters": [
+          {
+            "name": "client",
+            "in": "path",
+            "required": true,
+            "description": "which client's appointments move",
+            "schema": {
+              "type": "string"
+            },
+            "x-jevbrev": {
+              "type": "ref:find_client",
+              "words": "which client's appointments move"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from_weekday": {
+                    "type": "string",
+                    "enum": [
+                      "Monday",
+                      "Tuesday",
+                      "Wednesday",
+                      "Thursday",
+                      "Friday",
+                      "Saturday",
+                      "Sunday"
+                    ],
+                    "description": "which weekday the appointments are on now",
+                    "x-jevbrev": {
+                      "type": "weekday",
+                      "words": "which weekday the appointments are on now",
+                      "role": "schedule.now"
+                    }
+                  },
+                  "from_time": {
+                    "type": "string",
+                    "pattern": "^[0-2][0-9]:[0-5][0-9]$",
+                    "description": "what time the appointments are at now",
+                    "x-jevbrev": {
+                      "type": "time",
+                      "words": "what time the appointments are at now",
+                      "role": "schedule.now"
+                    }
+                  },
+                  "to_weekday": {
+                    "type": "string",
+                    "enum": [
+                      "Monday",
+                      "Tuesday",
+                      "Wednesday",
+                      "Thursday",
+                      "Friday",
+                      "Saturday",
+                      "Sunday"
+                    ],
+                    "description": "which weekday the appointments should move to",
+                    "x-jevbrev": {
+                      "type": "weekday",
+                      "words": "which weekday the appointments should move to",
+                      "role": "schedule.moves_to"
+                    }
+                  },
+                  "to_time": {
+                    "type": "string",
+                    "pattern": "^[0-2][0-9]:[0-5][0-9]$",
+                    "description": "what time the appointments should move to",
+                    "x-jevbrev": {
+                      "type": "time",
+                      "words": "what time the appointments should move to",
+                      "role": "schedule.moves_to"
+                    }
+                  },
+                  "starting": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "when the move starts: a date, a week or a month",
+                    "x-jevbrev": {
+                      "type": "date",
+                      "words": "when the move starts: a date, a week or a month"
+                    }
+                  },
+                  "count": {
+                    "type": "integer",
+                    "description": "how many appointments to move",
+                    "x-jevbrev": {
+                      "type": "int",
+                      "words": "how many appointments to move"
+                    }
+                  }
+                },
+                "required": [
+                  "from_weekday",
+                  "from_time",
+                  "to_weekday",
+                  "to_time",
+                  "starting"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookings/{booking}/cancel": {
+      "post": {
+        "operationId": "cancel_booking",
+        "summary": "Cancel one booking and tell the client",
+        "x-jevbrev": {
+          "kind": "change",
+          "yes": [
+            "cancel Jordan's booking on Friday"
+          ],
+          "no": [
+            "move Jordan to Friday"
+          ]
+        },
+        "responses": {
+          "200": {
+            "description": "a preview of the change; nothing changes until it is confirmed"
+          }
+        },
+        "parameters": [
+          {
+            "name": "booking",
+            "in": "path",
+            "required": true,
+            "description": "which booking to cancel",
+            "schema": {
+              "type": "string"
+            },
+            "x-jevbrev": {
+              "type": "ref:list_bookings",
+              "words": "which booking to cancel"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

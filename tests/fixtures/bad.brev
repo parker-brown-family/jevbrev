@@ -1,0 +1,13 @@
+api Broken  ftp://nowhere
+
+roles g
+  only  the {kind}
+
+read? find  GET /items/{item}
+  Find an item by...
+  id  str  ?
+
+change move  POST /m
+  Move it
+  when  str  g.only  when it moves
+  x  ref:nothing  which thing

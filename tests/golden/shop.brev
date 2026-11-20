@@ -1,0 +1,19 @@
+# Draft from shop.openapi.json by jevbrev import.
+# Every ? is unwritten and every read? or change? is a guess. jevbrev check lists what is left.
+
+api Shop  https://shop.example/api
+
+read? find_items  GET /items
+  Find items by part of their name
+  name    str  which item, by name
+  limit?  int  ?
+  # skipped header parameter X-Trace
+
+change? reprice  PUT /items/{id}/price
+  Change an item's price from a date onward.
+  id      str   ?
+  amount  int   the new price
+  from    date  ?
+  tags?   str   ?
+  # amount is a decimal number in OpenAPI; jevbrev reads it as int
+  # tags is a list in OpenAPI; jevbrev reads it as str

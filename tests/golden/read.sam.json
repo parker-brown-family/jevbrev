@@ -1,0 +1,38 @@
+{
+  "action": "move_client_series",
+  "inputs": {
+    "client": {
+      "state": "said",
+      "p": 0.97
+    },
+    "from_weekday": {
+      "state": "said",
+      "value": "Monday",
+      "p": 0.73
+    },
+    "from_time": {
+      "state": "said",
+      "value": "9:30",
+      "p": 0.94
+    },
+    "to_weekday": {
+      "state": "said",
+      "value": "Monday",
+      "p": 0.73
+    },
+    "to_time": {
+      "state": "said",
+      "value": "8:30",
+      "p": 1.0
+    },
+    "starting": {
+      "state": "unsaid",
+      "p": 0.04
+    },
+    "count": {
+      "state": "unsaid",
+      "p": 0.02
+    }
+  },
+  "complete": false
+}

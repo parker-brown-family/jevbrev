@@ -1,0 +1,15 @@
+{
+  "name": "jevbrev",
+  "version": "0.1.0",
+  "description": "Short API definitions that code turns into Jev (TypeSafe System One) questions, answer readers and HTTP calls",
+  "license": "MIT OR Apache-2.0",
+  "repository": { "type": "git", "url": "git+https://github.com/parker-brown-family/jevbrev.git" },
+  "homepage": "https://github.com/parker-brown-family/jevbrev#readme",
+  "bugs": "https://github.com/parker-brown-family/jevbrev/issues",
+  "keywords": ["jev", "typesafe", "openapi", "api", "llm", "wasm"],
+  "main": "jevbrev.js",
+  "types": "jevbrev.d.ts",
+  "files": ["jevbrev.js", "jevbrev.d.ts", "jevbrev_bg.wasm", "jevbrev_bg.wasm.d.ts", "README.md", "LICENSE-MIT", "LICENSE-APACHE"],
+  "engines": { "node": ">=18" },
+  "sideEffects": false
+}
